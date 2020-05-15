@@ -20,25 +20,25 @@ REPOSITORY                                           TAG                 IMAGE I
 
 4.	Add tag to the image created
 ```
-sudo podman tag <image id> cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume-hpe:1.0
+sudo podman tag <image id> cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume-hpe:latest
 ```
 
 5.	Run podman images command to verify the repository and tag is correctly updated to the docker image
 ```
 podman images
 REPOSITORY                                                                                                            TAG                                IMAGE ID               CREATED                    SIZE
-cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume-hpe                      1.0                             b497daac7539        2 minutes ago       1.01 GB
+cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume-hpe                      latest                             b497daac7539        2 minutes ago       1.01 GB
 ```
 
 6.	Push the container to a local registry
 ```
-sudo openstack tripleo container image push --local cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume-hpe:1.0
+sudo openstack tripleo container image push --local cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume-hpe:latest
 ```
 
 7.	Create new env file “custom_container_[iscsi|fc].yaml” under /home/stack/custom_container/ with only the custom container parameter and other backend details. Sample files are available in [custom_container](https://github.com/hpe-storage/hpe-3par-cinder-rhosp16/blob/master/custom_container) folder for reference
 ```
 parameter_defaults:
-    DockerCinderVolumeImage: cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume-hpe:1.0
+    DockerCinderVolumeImage: cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume-hpe:latest
 ```
 
 8.	Deploy overcloud
