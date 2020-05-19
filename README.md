@@ -1,15 +1,17 @@
-### HPE 3PAR and Primera Cinder volume custom container for RHOSP16
+#### HPE 3PAR and Primera Cinder volume custom container for RHOSP16
 
 ## Overview
 
 This page provides detailed steps on how to enable the containerization of HPE 3PAR and Primera Cinder driver on top of the OSP Cinder images.
 
 The custom Cinder container image contains following packages:
+
 python-3parclient 4.2.11
 
 ## Prerequisites
 
 Red Hat OpenStack Platform 16.
+
 HPE 3PAR array 3.3.1.
 
 ## Steps
@@ -37,6 +39,9 @@ REPOSITORY                                           TAG                 IMAGE I
 ```
 
 1.5	Add tag to the image created
+
+In below command, cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787 acts as local registry.
+
 ```
 sudo podman tag <image id> cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume-hpe:latest
 ```
@@ -59,12 +64,22 @@ parameter_defaults:
     DockerCinderVolumeImage: cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume-hpe:latest
 ```
 
-3.	Deploy overcloud
+3.	Deploy the overcloud
 ```
-openstack overcloud deploy --templates /usr/share/openstack-tripleo-heat-templates -e /home/stack/templates/node-info.yaml -e /home/stack/containers-prepare-parameter.yaml -e /home/stack/custom_container/custom_container_[iscsi|fc].yaml --ntp-server 16.110.135.123 --debug
+openstack overcloud deploy --templates /usr/share/openstack-tripleo-heat-templates \
+    -e /home/stack/templates/node-info.yaml \
+    -e /home/stack/containers-prepare-parameter.yaml \
+    -e /home/stack/custom_container/custom_container_[iscsi|fc].yaml \
+    --ntp-server 16.110.135.123 \
+    --debug
 ```
 
-10.	SSH to controller node from undercloud and check the docker process for cinder-volume
+The order of the environment files (.yaml) is important as the parameters and resources defined in subsequent environment files take precedence.
+The custom_container_[iscsi|fc].yaml is mentioned after containers-prepare-parameter.yaml so that custom container can be used instead of the default one.
+
+3.	Verify the custom container
+
+3.1	SSH to controller node from undercloud and check the docker process for cinder-volume
 ```
 (overcloud) [heat-admin@overcloud-controller-0 ~]$ sudo podman ps | grep cinder
 56baa616ae2c  cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume:16.0-90       /bin/bash /usr/lo...  2 weeks ago  Up 2 hours ago         openstack-cinder-volume-podman-0
@@ -73,7 +88,7 @@ openstack overcloud deploy --templates /usr/share/openstack-tripleo-heat-templat
 4043187451d2  cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-api:16.0-90          kolla_start           2 weeks ago  Up 2 hours ago         cinder_api
 ```
 
-11.	Verify the module installed is present in the cinder-volume container
+3.2.	Verify that the python-3parclient is present in the cinder-volume container
 ```
 (overcloud) [heat-admin@overcloud-controller-0 ~]$ sudo podman exec -it 56baa616ae2c bash
 ()[root@overcloud-controller-0 /]# pip list | grep 3par
