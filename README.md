@@ -4,19 +4,19 @@
 
 This page provides detailed steps on how to enable the containerization of HPE 3PAR and Primera Cinder driver on top of the OSP Cinder images.
 
-The custom Cinder container image contains following packages:
+The custom Cinder container image contains following package:
 
 python-3parclient 4.2.11
 
 ## Prerequisites
 
-Red Hat OpenStack Platform 16.
+* Red Hat OpenStack Platform 16.
 
-HPE 3PAR array 3.3.1.
+* HPE 3PAR array 3.3.1.
 
 ## Steps
 
-1.	Prepare custom container
+#1.	Prepare custom container
 
 1.1	Create Dockerfile as described [here](https://github.com/hpe-storage/hpe-3par-cinder-rhosp16/blob/master/Dockerfile)
 
@@ -58,13 +58,15 @@ cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume
 sudo openstack tripleo container image push --local cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume-hpe:latest
 ```
 
-2.	Create new env file “custom_container_[iscsi|fc].yaml” under /home/stack/custom_container/ with only the custom container parameter and other backend details. Sample files are available in [custom_container](https://github.com/hpe-storage/hpe-3par-cinder-rhosp16/blob/master/custom_container) folder for reference
+#2.	Prepare custom environment yaml
+
+Create new env file “custom_container_[iscsi|fc].yaml” under /home/stack/custom_container/ with only the custom container parameter and other backend details. Sample files are available in [custom_container](https://github.com/hpe-storage/hpe-3par-cinder-rhosp16/blob/master/custom_container) folder for reference
 ```
 parameter_defaults:
     DockerCinderVolumeImage: cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume-hpe:latest
 ```
 
-3.	Deploy the overcloud
+#3.	Deploy the overcloud
 ```
 openstack overcloud deploy --templates /usr/share/openstack-tripleo-heat-templates \
     -e /home/stack/templates/node-info.yaml \
@@ -77,9 +79,9 @@ openstack overcloud deploy --templates /usr/share/openstack-tripleo-heat-templat
 The order of the environment files (.yaml) is important as the parameters and resources defined in subsequent environment files take precedence.
 The custom_container_[iscsi|fc].yaml is mentioned after containers-prepare-parameter.yaml so that custom container can be used instead of the default one.
 
-3.	Verify the custom container
+#4.	Verify the custom container
 
-3.1	SSH to controller node from undercloud and check the docker process for cinder-volume
+4.1	SSH to controller node from undercloud and check the docker process for cinder-volume
 ```
 (overcloud) [heat-admin@overcloud-controller-0 ~]$ sudo podman ps | grep cinder
 56baa616ae2c  cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume:16.0-90       /bin/bash /usr/lo...  2 weeks ago  Up 2 hours ago         openstack-cinder-volume-podman-0
@@ -88,7 +90,7 @@ The custom_container_[iscsi|fc].yaml is mentioned after containers-prepare-param
 4043187451d2  cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-api:16.0-90          kolla_start           2 weeks ago  Up 2 hours ago         cinder_api
 ```
 
-3.2.	Verify that the python-3parclient is present in the cinder-volume container
+4.2.	Verify that the python-3parclient is present in the cinder-volume container
 ```
 (overcloud) [heat-admin@overcloud-controller-0 ~]$ sudo podman exec -it 56baa616ae2c bash
 ()[root@overcloud-controller-0 /]# pip list | grep 3par
