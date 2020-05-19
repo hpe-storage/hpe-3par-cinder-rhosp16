@@ -1,4 +1,4 @@
-#### HPE 3PAR and Primera Cinder volume custom container for RHOSP16
+### HPE 3PAR and Primera Cinder volume custom container for RHOSP16
 
 ## Overview
 
@@ -16,7 +16,7 @@ python-3parclient 4.2.11
 
 ## Steps
 
-#1.	Prepare custom container
+# 1.	Prepare custom container
 
 1.1	Create Dockerfile as described [here](https://github.com/hpe-storage/hpe-3par-cinder-rhosp16/blob/master/Dockerfile)
 
@@ -58,7 +58,7 @@ cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume
 sudo openstack tripleo container image push --local cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume-hpe:latest
 ```
 
-#2.	Prepare custom environment yaml
+# 2.	Prepare custom environment yaml
 
 Create new env file “custom_container_[iscsi|fc].yaml” under /home/stack/custom_container/ with only the custom container parameter and other backend details. Sample files are available in [custom_container](https://github.com/hpe-storage/hpe-3par-cinder-rhosp16/blob/master/custom_container) folder for reference
 ```
@@ -66,7 +66,7 @@ parameter_defaults:
     DockerCinderVolumeImage: cld13b4.ctlplane.set.rdlabs.hpecorp.net:8787/rhosp-rhel8/openstack-cinder-volume-hpe:latest
 ```
 
-#3.	Deploy the overcloud
+# 3.	Deploy the overcloud
 ```
 openstack overcloud deploy --templates /usr/share/openstack-tripleo-heat-templates \
     -e /home/stack/templates/node-info.yaml \
@@ -79,7 +79,7 @@ openstack overcloud deploy --templates /usr/share/openstack-tripleo-heat-templat
 The order of the environment files (.yaml) is important as the parameters and resources defined in subsequent environment files take precedence.
 The custom_container_[iscsi|fc].yaml is mentioned after containers-prepare-parameter.yaml so that custom container can be used instead of the default one.
 
-#4.	Verify the custom container
+# 4.	Verify the custom container
 
 4.1	SSH to controller node from undercloud and check the docker process for cinder-volume
 ```
