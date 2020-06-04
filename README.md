@@ -12,7 +12,7 @@ python-3parclient 4.2.11
 
 * Red Hat OpenStack Platform 16.
 
-* HPE 3PAR array 3.3.1.
+* HPE 3PAR array 3.3.1 OR HPE Primera array.
 
 ## Steps
 

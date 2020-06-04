@@ -24,5 +24,3 @@ COPY LICENSE /licenses
 
 # switch the container back to the default user
 USER "cinder"
-
-
