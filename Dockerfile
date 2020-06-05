@@ -17,10 +17,10 @@ USER "root"
 # install python module python-3parclient(dependent module for HPE 3PAR Cinder driver)
 RUN curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py" && python get-pip.py && pip install -U setuptools && pip install python-3parclient==4.2.11 && rm get-pip.py
 
+RUN mkdir -p /licenses
+
 # Add required license as text file in Liceses directory (GPL, MIT, APACHE, Partner End User Agreement, etc)
 COPY LICENSE /licenses
 
 # switch the container back to the default user
 USER "cinder"
-
-
